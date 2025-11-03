@@ -1,10 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   WidgetContainer,
   Header,
   Title,
-  LoadingContainer,
-  LoadingSpinner,
   PodiumContainer,
   Podium,
   PodiumItem,
@@ -30,7 +28,8 @@ import {
   ItemName,
   ItemAction,
 } from "./styles";
-import { Button } from "antd";
+import { Button, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import type { Top10Item, DataSourceMetaData } from "../../hooks/Top10/types";
 
 export interface Top10WidgetProps {
@@ -57,6 +56,8 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
   onItemSelect,
   metadata,
 }) => {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  
   const displayTitle = metadata?.chartTitle || "Top 10";
   const displayThousandSeparator = metadata?.thousandSeparator ?? "";
   const displayPrefix = metadata?.prefix ?? "";
@@ -91,21 +92,12 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
   };
 
   const handleItemSelect = (item: Top10Item) => {
+    // Toggle selection: if already selected, deselect it
+    setSelectedId((prevId) => (prevId === item.id ? null : item.id));
     if (onItemSelect) {
       onItemSelect(item);
     }
   };
-
-  if (loading) {
-    return (
-      <LoadingContainer>
-        <Header>
-          <Title>{displayTitle}</Title>
-        </Header>
-        <LoadingSpinner>Loading...</LoadingSpinner>
-      </LoadingContainer>
-    );
-  }
 
   const topThree = data.slice(0, 3);
   const remaining = data.slice(3);
@@ -132,132 +124,139 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
 
   return (
     <WidgetContainer>
-      <Header>
-        <Title>{displayTitle}</Title>
-      </Header>
+      <Spin
+        spinning={loading}
+        indicator={<LoadingOutlined spin />}
+        tip="Loading..."
+      >
+        <Header>
+          <Title>{displayTitle}</Title>
+        </Header>
+        {/* Podium for Top 3 */}
+        {topThree.length > 0 && (
+          <PodiumContainer>
+            <Podium>
+              {podiumOrder.map((item) => {
+                if (!item) return null;
 
-      {/* Podium for Top 3 */}
-      {topThree.length > 0 && (
-        <PodiumContainer>
-          <Podium>
-            {podiumOrder.map((item) => {
-              if (!item) return null;
+                return (
+                  <PodiumItem
+                    key={item.id}
+                    rank={item.rank}
+                    isSelected={selectedId === item.id}
+                    onClick={() => handleItemSelect(item)}
+                  >
+                    <PodiumCard rank={item.rank} metadata={metadata} isSelected={selectedId === item.id}>
+                      <PodiumAvatar>
+                        <AvatarCircle rank={item.rank} metadata={metadata}>
+                          <AvatarText rank={item.rank} metadata={metadata}>
+                            {item.rank}
+                          </AvatarText>
+                        </AvatarCircle>
+                      </PodiumAvatar>
 
+                      <PodiumInfo>
+                        {displayNameLabel && (
+                          <PodiumLabel>{displayNameLabel}</PodiumLabel>
+                        )}
+                        <PodiumName rank={item.rank}>{item.name}</PodiumName>
+                      </PodiumInfo>
+
+                      <PodiumAmountSection>
+                        <PodiumLabel>{displayValueLabel}</PodiumLabel>
+                        <PodiumAmount rank={item.rank} metadata={metadata}>
+                          {formatAmount(item.value)}
+                        </PodiumAmount>
+                      </PodiumAmountSection>
+
+                      <PodiumButtonSection>
+                        <Button
+                          icon={
+                            displayButtonIcon ? (
+                              <span
+                                dangerouslySetInnerHTML={{
+                                  __html: displayButtonIcon,
+                                }}
+                              />
+                            ) : (
+                              <HandHeart style={{ fontSize: "16px" }} />
+                            )
+                          }
+                          onClick={() => handleButtonClick(item)}
+                          loading={loading}
+                          style={{
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          {displayButtonText}
+                        </Button>
+                      </PodiumButtonSection>
+                    </PodiumCard>
+                  </PodiumItem>
+                );
+              })}
+            </Podium>
+          </PodiumContainer>
+        )}
+
+        {/* Regular list for positions 4-10 */}
+        {remaining.length > 0 && (
+          <List>
+            {remaining.map((item) => {
               return (
-                <PodiumItem
+                <ListItem
                   key={item.id}
-                  rank={item.rank}
                   onClick={() => handleItemSelect(item)}
+                  metadata={metadata}
+                  isSelected={selectedId === item.id}
                 >
-                  <PodiumCard rank={item.rank} metadata={metadata}>
-                    <PodiumAvatar>
-                      <AvatarCircle rank={item.rank} metadata={metadata}>
-                        <AvatarText rank={item.rank} metadata={metadata}>
-                          {item.rank}
-                        </AvatarText>
-                      </AvatarCircle>
-                    </PodiumAvatar>
+                  <ItemRank>
+                    <RankNumber metadata={metadata}>{item.rank}</RankNumber>
+                  </ItemRank>
 
-                    <PodiumInfo>
-                      {displayNameLabel && (
-                        <PodiumLabel>{displayNameLabel}</PodiumLabel>
-                      )}
-                      <PodiumName rank={item.rank}>{item.name}</PodiumName>
-                    </PodiumInfo>
-
-                    <PodiumAmountSection>
-                      <PodiumLabel>{displayValueLabel}</PodiumLabel>
-                      <PodiumAmount rank={item.rank} metadata={metadata}>
+                  <ItemContent>
+                    <ItemInfo>
+                      <ItemLabel>{displayValueLabel}</ItemLabel>
+                      <ItemAmount metadata={metadata}>
                         {formatAmount(item.value)}
-                      </PodiumAmount>
-                    </PodiumAmountSection>
+                      </ItemAmount>
+                    </ItemInfo>
 
-                    <PodiumButtonSection>
-                      <Button
-                        icon={
-                          displayButtonIcon ? (
-                            <span
-                              dangerouslySetInnerHTML={{
-                                __html: displayButtonIcon,
-                              }}
-                            />
-                          ) : (
-                            <HandHeart style={{ fontSize: "16px" }} />
-                          )
-                        }
-                        onClick={() => handleButtonClick(item)}
-                        loading={loading}
-                        style={{
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {displayButtonText}
-                      </Button>
-                    </PodiumButtonSection>
-                  </PodiumCard>
-                </PodiumItem>
+                    <ItemDetails>
+                      {displayNameLabel && (
+                        <ItemLabel>{displayNameLabel}</ItemLabel>
+                      )}
+                      <ItemName>{item.name}</ItemName>
+                    </ItemDetails>
+                  </ItemContent>
+
+                  <ItemAction>
+                    <Button
+                      icon={
+                        displayButtonIcon ? (
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: displayButtonIcon,
+                            }}
+                          />
+                        ) : (
+                          <HandHeart style={{ fontSize: "16px" }} />
+                        )
+                      }
+                      onClick={() => handleButtonClick(item)}
+                      loading={loading}
+                      style={{ alignItems: "center", justifyContent: "center" }}
+                    >
+                      {displayButtonText}
+                    </Button>
+                  </ItemAction>
+                </ListItem>
               );
             })}
-          </Podium>
-        </PodiumContainer>
-      )}
-
-      {/* Regular list for positions 4-10 */}
-      {remaining.length > 0 && (
-        <List>
-          {remaining.map((item) => {
-            return (
-              <ListItem
-                key={item.id}
-                onClick={() => handleItemSelect(item)}
-                metadata={metadata}
-              >
-                <ItemRank>
-                  <RankNumber metadata={metadata}>{item.rank}</RankNumber>
-                </ItemRank>
-
-                <ItemContent>
-                  <ItemInfo>
-                    <ItemLabel>{displayValueLabel}</ItemLabel>
-                    <ItemAmount metadata={metadata}>
-                      {formatAmount(item.value)}
-                    </ItemAmount>
-                  </ItemInfo>
-
-                  <ItemDetails>
-                    {displayNameLabel && (
-                      <ItemLabel>{displayNameLabel}</ItemLabel>
-                    )}
-                    <ItemName>{item.name}</ItemName>
-                  </ItemDetails>
-                </ItemContent>
-
-                <ItemAction>
-                  <Button
-                    icon={
-                      displayButtonIcon ? (
-                        <span
-                          dangerouslySetInnerHTML={{
-                            __html: displayButtonIcon,
-                          }}
-                        />
-                      ) : (
-                        <HandHeart style={{ fontSize: "16px" }} />
-                      )
-                    }
-                    onClick={() => handleButtonClick(item)}
-                    loading={loading}
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    {displayButtonText}
-                  </Button>
-                </ItemAction>
-              </ListItem>
-            );
-          })}
-        </List>
-      )}
+          </List>
+        )}
+      </Spin>
     </WidgetContainer>
   );
 };

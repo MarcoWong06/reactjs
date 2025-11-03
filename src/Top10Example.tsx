@@ -44,18 +44,18 @@ const Top10Example: React.FC = () => {
       runnerUpIndexColor: "#ffffff",
       thirdPlaceIndexColor: "#ffffff",
       otherIndexColor: "#ffffff",
-      championIndexBackgroundColor: "#f57c00",
-      runnerUpIndexBackgroundColor: "#9e9e9e",
-      thirdPlaceIndexBackgroundColor: "#b5966e",
-      otherIndexBackgroundColor: "#214083",
-      championValueColor: "#f57c00",
-      runnerUpValueColor: "#333",
-      thirdPlaceValueColor: "#333",
-      otherValueColor: "#333",
+      championIndexBackgroundColor: undefined, // "#f57c00",
+      runnerUpIndexBackgroundColor: undefined, // "#9e9e9e",
+      thirdPlaceIndexBackgroundColor: undefined, // "#b5966e",
+      otherIndexBackgroundColor: undefined, // "#214083",
+      championValueColor: undefined, // "#f57c00",
+      runnerUpValueColor: undefined, // "#333",
+      thirdPlaceValueColor: undefined, // "#333",
+      otherValueColor: undefined, // "#333",
       championValueBackgroundColor: undefined,
       runnerUpValueBackgroundColor: undefined,
       thirdPlaceValueBackgroundColor: undefined,
-      otherValueBackgroundColor: "#07c1f2",
+      otherValueBackgroundColor: undefined, // "#07c1f2",
       championBackgroundColor: undefined,
       runnerUpBackgroundColor: undefined,
       thirdPlaceBackgroundColor: undefined,
@@ -72,12 +72,6 @@ const Top10Example: React.FC = () => {
       const item = result.dataContent;
       if (item) {
         console.log("Selection clicked for:", item);
-        // Handle selection action here
-        alert(
-          `Selection clicked for ${item.name} (${
-            item.id
-          })\nTotal amount: $${item.value.toFixed(2)}`
-        );
       }
     });
 

@@ -23,20 +23,6 @@ export const Title = styled.h2`
   border-bottom: 4px solid #07c1f2;
 `;
 
-export const LoadingContainer = styled(WidgetContainer)`
-  min-height: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-export const LoadingSpinner = styled.div`
-  font-size: 18px;
-  color: #999;
-  padding: 40px;
-`;
-
 // Podium Styles
 export const PodiumContainer = styled.div`
   position: relative;
@@ -58,7 +44,7 @@ export const Podium = styled.div`
   }
 `;
 
-export const PodiumItem = styled.div<{ rank: number }>`
+export const PodiumItem = styled.div<{ rank: number; isSelected?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -76,10 +62,14 @@ export const PodiumItem = styled.div<{ rank: number }>`
 export const PodiumCard = styled.div<{
   rank: number;
   metadata?: DataSourceMetaData;
+  isSelected?: boolean;
 }>`
   border-radius: 24px;
   padding: 40px 24px 24px 24px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: ${(props) => 
+    props.isSelected 
+      ? "0 8px 24px rgba(0, 0, 0, 0.12), 0 0 0 4px #1890ff" 
+      : "0 8px 24px rgba(0, 0, 0, 0.12)"};
   position: relative;
   width: 280px;
   transition: all 0.3s ease;
@@ -132,7 +122,10 @@ export const PodiumCard = styled.div<{
   &:hover {
     transform: ${(props) => (props.rank === 1 ? "scale(1.1)" : "scale(1)")}
       translateY(-8px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+    box-shadow: ${(props) => 
+      props.isSelected 
+        ? "0 12px 32px rgba(0, 0, 0, 0.16), 0 0 0 4px #1890ff" 
+        : "0 12px 32px rgba(0, 0, 0, 0.16)"};
 
     @media (max-width: 968px) {
       transform: ${(props) => (props.rank === 1 ? "scale(1.1)" : "scale(1)")}
@@ -304,13 +297,17 @@ export const List = styled.div`
   margin-top: 40px;
 `;
 
-export const ListItem = styled.div<{ metadata?: DataSourceMetaData }>`
+export const ListItem = styled.div<{ metadata?: DataSourceMetaData; isSelected?: boolean }>`
   display: flex;
   align-items: center;
   padding: 20px 24px;
   background: ${(props) => props.metadata?.otherBackgroundColor || "#abf8ff"};
   border-radius: 16px;
   transition: all 0.3s ease;
+  box-shadow: ${(props) => 
+    props.isSelected 
+      ? "0 0 0 3px #1890ff" 
+      : "none"};
 
   &:hover {
     background: ${(props) => {
@@ -319,7 +316,10 @@ export const ListItem = styled.div<{ metadata?: DataSourceMetaData }>`
       return bgColor === "#abf8ff" ? "#82f0ff" : bgColor;
     }};
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: ${(props) => 
+      props.isSelected 
+        ? "0 4px 12px rgba(0, 0, 0, 0.1), 0 0 0 3px #1890ff" 
+        : "0 4px 12px rgba(0, 0, 0, 0.1)"};
   }
 `;
 

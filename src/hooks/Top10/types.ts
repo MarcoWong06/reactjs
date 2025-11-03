@@ -27,6 +27,7 @@ export interface DataSourceItem {
   id: string;
   name: string;
   value: number;
+  [key: string]: any;
 }
 
 // Metadata Types
