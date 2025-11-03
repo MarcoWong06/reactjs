@@ -1,5 +1,11 @@
 import { useCallback, useState, useMemo } from "react";
-import type { Top10Item, DataSource, Top10Data, UseTop10Return } from "./types";
+import type {
+  Top10Item,
+  DataSource,
+  Top10Data,
+  UseTop10Return,
+  DataSourceItem,
+} from "./types";
 import { CalculateFunction, SortOrder } from "./types";
 
 export * from "./types";
@@ -11,6 +17,7 @@ export class Events {
   private buttonClickCallback:
     | ((resultset: ResultObject<Top10Item>) => void)
     | null = null;
+
   onSelection(callback: (resultset: ResultObject<Top10Item>) => void): void {
     this.selectionCallback = callback;
   }
@@ -60,7 +67,7 @@ const calculateValue = (
 };
 
 const processDataItems = (
-  items: Array<{ id: string; name: string; value: number }>,
+  items: Array<DataSourceItem>,
   calculateFunction: CalculateFunction,
   sortOrder: SortOrder
 ): Top10Item[] => {
@@ -126,6 +133,26 @@ export const useTop10 = (): UseTop10Return => {
         buttonIcon: meta.buttonIcon,
         nameLabel: meta.nameLabel,
         valueLabel: meta.valueLabel,
+        championIndexColor: meta.championIndexColor,
+        championIndexBackgroundColor: meta.championIndexBackgroundColor,
+        championValueColor: meta.championValueColor,
+        championValueBackgroundColor: meta.championValueBackgroundColor,
+        championBackgroundColor: meta.championBackgroundColor,
+        runnerUpIndexColor: meta.runnerUpIndexColor,
+        runnerUpIndexBackgroundColor: meta.runnerUpIndexBackgroundColor,
+        runnerUpValueColor: meta.runnerUpValueColor,
+        runnerUpValueBackgroundColor: meta.runnerUpValueBackgroundColor,
+        runnerUpBackgroundColor: meta.runnerUpBackgroundColor,
+        thirdPlaceIndexColor: meta.thirdPlaceIndexColor,
+        thirdPlaceIndexBackgroundColor: meta.thirdPlaceIndexBackgroundColor,
+        thirdPlaceValueColor: meta.thirdPlaceValueColor,
+        thirdPlaceValueBackgroundColor: meta.thirdPlaceValueBackgroundColor,
+        thirdPlaceBackgroundColor: meta.thirdPlaceBackgroundColor,
+        otherIndexColor: meta.otherIndexColor,
+        otherIndexBackgroundColor: meta.otherIndexBackgroundColor,
+        otherValueColor: meta.otherValueColor,
+        otherValueBackgroundColor: meta.otherValueBackgroundColor,
+        otherBackgroundColor: meta.otherBackgroundColor,
         version: meta.version,
         redis: meta.redis,
       });
@@ -151,6 +178,26 @@ export const useTop10 = (): UseTop10Return => {
         buttonIcon: metaData.buttonIcon,
         nameLabel: metaData.nameLabel,
         valueLabel: metaData.valueLabel,
+        championIndexColor: metaData.championIndexColor,
+        championIndexBackgroundColor: metaData.championIndexBackgroundColor,
+        championValueColor: metaData.championValueColor,
+        championValueBackgroundColor: metaData.championValueBackgroundColor,
+        championBackgroundColor: metaData.championBackgroundColor,
+        runnerUpIndexColor: metaData.runnerUpIndexColor,
+        runnerUpIndexBackgroundColor: metaData.runnerUpIndexBackgroundColor,
+        runnerUpValueColor: metaData.runnerUpValueColor,
+        runnerUpValueBackgroundColor: metaData.runnerUpValueBackgroundColor,
+        runnerUpBackgroundColor: metaData.runnerUpBackgroundColor,
+        thirdPlaceIndexColor: metaData.thirdPlaceIndexColor,
+        thirdPlaceIndexBackgroundColor: metaData.thirdPlaceIndexBackgroundColor,
+        thirdPlaceValueColor: metaData.thirdPlaceValueColor,
+        thirdPlaceValueBackgroundColor: metaData.thirdPlaceValueBackgroundColor,
+        thirdPlaceBackgroundColor: metaData.thirdPlaceBackgroundColor,
+        otherIndexColor: metaData.otherIndexColor,
+        otherIndexBackgroundColor: metaData.otherIndexBackgroundColor,
+        otherValueColor: metaData.otherValueColor,
+        otherValueBackgroundColor: metaData.otherValueBackgroundColor,
+        otherBackgroundColor: metaData.otherBackgroundColor,
         version: metaData.version || "1.0.0",
         redis: metaData.redis || false,
       },

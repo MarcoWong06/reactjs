@@ -31,13 +31,15 @@ import {
   ItemAction,
 } from "./styles";
 import { Button } from "antd";
-import type { Top10Item } from "../../hooks/Top10/types";
+import type { Top10Item, DataSourceMetaData } from "../../hooks/Top10/types";
 
 export interface Top10WidgetProps {
   data: Top10Item[];
   loading?: boolean;
   onButtonClick?: (item: Top10Item) => void;
   onItemSelect?: (item: Top10Item) => void;
+  metadata?: DataSourceMetaData;
+  // Legacy props for backward compatibility
   title?: string;
   thousandSeparator?: string;
   prefix?: string;
@@ -53,15 +55,17 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
   loading = false,
   onButtonClick,
   onItemSelect,
-  title = "Top 10",
-  thousandSeparator = "",
-  prefix = "",
-  suffix = "",
-  buttonText = "Action",
-  buttonIcon,
-  nameLabel,
-  valueLabel,
+  metadata,
 }) => {
+  const displayTitle = metadata?.chartTitle || "Top 10";
+  const displayThousandSeparator = metadata?.thousandSeparator ?? "";
+  const displayPrefix = metadata?.prefix ?? "";
+  const displaySuffix = metadata?.suffix ?? "";
+  const displayButtonText = metadata?.buttonText ?? "Action";
+  const displayButtonIcon = metadata?.buttonIcon;
+  const displayNameLabel = metadata?.nameLabel;
+  const displayValueLabel = metadata?.valueLabel;
+
   useEffect(() => {
     console.log("Top10Widget mounted with data:", data);
   }, [data]);
@@ -72,12 +76,12 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
     const parts = formatted.split(".");
     const integerPart = parts[0].replace(
       /\B(?=(\d{3})+(?!\d))/g,
-      thousandSeparator
+      displayThousandSeparator
     );
     const decimalPart = parts[1];
     return decimalPart
-      ? `${prefix}${integerPart}.${decimalPart}${suffix}`
-      : `${prefix}${integerPart}${suffix}`;
+      ? `${displayPrefix}${integerPart}.${decimalPart}${displaySuffix}`
+      : `${displayPrefix}${integerPart}${displaySuffix}`;
   };
 
   const handleButtonClick = (item: Top10Item) => {
@@ -96,7 +100,7 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
     return (
       <LoadingContainer>
         <Header>
-          <Title>{title}</Title>
+          <Title>{displayTitle}</Title>
         </Header>
         <LoadingSpinner>Loading...</LoadingSpinner>
       </LoadingContainer>
@@ -129,7 +133,7 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
   return (
     <WidgetContainer>
       <Header>
-        <Title>{title}</Title>
+        <Title>{displayTitle}</Title>
       </Header>
 
       {/* Podium for Top 3 */}
@@ -145,21 +149,25 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
                   rank={item.rank}
                   onClick={() => handleItemSelect(item)}
                 >
-                  <PodiumCard rank={item.rank}>
+                  <PodiumCard rank={item.rank} metadata={metadata}>
                     <PodiumAvatar>
-                      <AvatarCircle rank={item.rank}>
-                        <AvatarText rank={item.rank}>{item.rank}</AvatarText>
+                      <AvatarCircle rank={item.rank} metadata={metadata}>
+                        <AvatarText rank={item.rank} metadata={metadata}>
+                          {item.rank}
+                        </AvatarText>
                       </AvatarCircle>
                     </PodiumAvatar>
 
                     <PodiumInfo>
-                      {nameLabel && <PodiumLabel>{nameLabel}</PodiumLabel>}
+                      {displayNameLabel && (
+                        <PodiumLabel>{displayNameLabel}</PodiumLabel>
+                      )}
                       <PodiumName rank={item.rank}>{item.name}</PodiumName>
                     </PodiumInfo>
 
                     <PodiumAmountSection>
-                      <PodiumLabel>{valueLabel}</PodiumLabel>
-                      <PodiumAmount rank={item.rank}>
+                      <PodiumLabel>{displayValueLabel}</PodiumLabel>
+                      <PodiumAmount rank={item.rank} metadata={metadata}>
                         {formatAmount(item.value)}
                       </PodiumAmount>
                     </PodiumAmountSection>
@@ -167,9 +175,11 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
                     <PodiumButtonSection>
                       <Button
                         icon={
-                          buttonIcon ? (
+                          displayButtonIcon ? (
                             <span
-                              dangerouslySetInnerHTML={{ __html: buttonIcon }}
+                              dangerouslySetInnerHTML={{
+                                __html: displayButtonIcon,
+                              }}
                             />
                           ) : (
                             <HandHeart style={{ fontSize: "16px" }} />
@@ -182,7 +192,7 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
                           justifyContent: "center",
                         }}
                       >
-                        {buttonText}
+                        {displayButtonText}
                       </Button>
                     </PodiumButtonSection>
                   </PodiumCard>
@@ -198,19 +208,27 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
         <List>
           {remaining.map((item) => {
             return (
-              <ListItem key={item.id} onClick={() => handleItemSelect(item)}>
+              <ListItem
+                key={item.id}
+                onClick={() => handleItemSelect(item)}
+                metadata={metadata}
+              >
                 <ItemRank>
-                  <RankNumber>{item.rank}</RankNumber>
+                  <RankNumber metadata={metadata}>{item.rank}</RankNumber>
                 </ItemRank>
 
                 <ItemContent>
                   <ItemInfo>
-                    <ItemLabel>{valueLabel}</ItemLabel>
-                    <ItemAmount>{formatAmount(item.value)}</ItemAmount>
+                    <ItemLabel>{displayValueLabel}</ItemLabel>
+                    <ItemAmount metadata={metadata}>
+                      {formatAmount(item.value)}
+                    </ItemAmount>
                   </ItemInfo>
 
                   <ItemDetails>
-                    {nameLabel && <ItemLabel>{nameLabel}</ItemLabel>}
+                    {displayNameLabel && (
+                      <ItemLabel>{displayNameLabel}</ItemLabel>
+                    )}
                     <ItemName>{item.name}</ItemName>
                   </ItemDetails>
                 </ItemContent>
@@ -218,9 +236,11 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
                 <ItemAction>
                   <Button
                     icon={
-                      buttonIcon ? (
+                      displayButtonIcon ? (
                         <span
-                          dangerouslySetInnerHTML={{ __html: buttonIcon }}
+                          dangerouslySetInnerHTML={{
+                            __html: displayButtonIcon,
+                          }}
                         />
                       ) : (
                         <HandHeart style={{ fontSize: "16px" }} />
@@ -230,7 +250,7 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
                     loading={loading}
                     style={{ alignItems: "center", justifyContent: "center" }}
                   >
-                    {buttonText}
+                    {displayButtonText}
                   </Button>
                 </ItemAction>
               </ListItem>
