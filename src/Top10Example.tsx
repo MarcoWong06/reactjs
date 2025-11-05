@@ -79,7 +79,7 @@ const Top10Example: React.FC = () => {
     Events.onButtonClick((result) => {
       const item = result.dataContent;
       if (item && dataSource.metaData.buttonUri) {
-        let uri = dataSource.metaData.buttonUri;
+        let uri = dataSource.metaData.buttonUri.toString();
         uri = uri.replace(/\$\{(\w+)\}/g, (match, key) => {
           const value = (item as DataSourceItem)[key];
           return value !== undefined ? String(value) : match;
