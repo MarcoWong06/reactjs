@@ -62,7 +62,7 @@ const Top10Example: React.FC = () => {
       runnerUpBackgroundColor: undefined,
       thirdPlaceBackgroundColor: undefined,
       otherBackgroundColor: undefined,
-      version: "1.2.0",
+      version: "1.2.1",
       redis: false,
     },
   };
