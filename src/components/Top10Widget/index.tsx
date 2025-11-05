@@ -57,13 +57,13 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
   metadata,
 }) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  
-  const displayTitle = metadata?.chartTitle || "Top 10";
+
+  const displayTitle = metadata?.chartTitle;
   const displayThousandSeparator = metadata?.thousandSeparator ?? "";
   const displayPrefix = metadata?.prefix ?? "";
   const displaySuffix = metadata?.suffix ?? "";
   const displayButtonText = metadata?.buttonText ?? "Action";
-  const displayButtonIcon = metadata?.buttonIcon;
+  const displayButtonIcon = metadata?.buttonIcon ?? "";
   const displayNameLabel = metadata?.nameLabel;
   const displayValueLabel = metadata?.valueLabel;
 
@@ -107,21 +107,6 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
     topThree[2], // 3rd place - right (or bottom on mobile)
   ].filter(Boolean); // Filter out undefined if less than 3 items
 
-  const HandHeart = (props: any) => (
-    <svg
-      width="1em"
-      height="1em"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      {...props}
-    >
-      <path
-        fill="#000000"
-        d="M20 17q.86 0 1.45.6t.58 1.4L14 22l-7-2v-9h1.95l7.27 2.69q.78.31.78 1.12q0 .47-.34.82t-.86.37H13l-1.75-.67l-.33.94L13 17zM16 3.23Q17.06 2 18.7 2q1.36 0 2.3 1t1 2.3q0 1.03-1 2.46t-1.97 2.39T16 13q-2.08-1.89-3.06-2.85t-1.97-2.39T10 5.3q0-1.36.97-2.3t2.34-1q1.6 0 2.69 1.23M.984 11H5v11H.984z"
-      ></path>
-    </svg>
-  );
-
   return (
     <WidgetContainer>
       <Spin
@@ -129,9 +114,11 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
         indicator={<LoadingOutlined spin />}
         tip="Loading..."
       >
-        <Header>
-          <Title>{displayTitle}</Title>
-        </Header>
+        {displayTitle && (
+          <Header>
+            <Title metadata={metadata}>{displayTitle}</Title>
+          </Header>
+        )}
         {/* Podium for Top 3 */}
         {topThree.length > 0 && (
           <PodiumContainer>
@@ -146,7 +133,11 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
                     isSelected={selectedId === item.id}
                     onClick={() => handleItemSelect(item)}
                   >
-                    <PodiumCard rank={item.rank} metadata={metadata} isSelected={selectedId === item.id}>
+                    <PodiumCard
+                      rank={item.rank}
+                      metadata={metadata}
+                      isSelected={selectedId === item.id}
+                    >
                       <PodiumAvatar>
                         <AvatarCircle rank={item.rank} metadata={metadata}>
                           <AvatarText rank={item.rank} metadata={metadata}>
@@ -172,14 +163,12 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
                       <PodiumButtonSection>
                         <Button
                           icon={
-                            displayButtonIcon ? (
+                            displayButtonIcon && (
                               <span
                                 dangerouslySetInnerHTML={{
                                   __html: displayButtonIcon,
                                 }}
                               />
-                            ) : (
-                              <HandHeart style={{ fontSize: "16px" }} />
                             )
                           }
                           onClick={() => handleButtonClick(item)}
@@ -234,14 +223,12 @@ export const Top10Widget: React.FC<Top10WidgetProps> = ({
                   <ItemAction>
                     <Button
                       icon={
-                        displayButtonIcon ? (
+                        displayButtonIcon && (
                           <span
                             dangerouslySetInnerHTML={{
                               __html: displayButtonIcon,
                             }}
                           />
-                        ) : (
-                          <HandHeart style={{ fontSize: "16px" }} />
                         )
                       }
                       onClick={() => handleButtonClick(item)}

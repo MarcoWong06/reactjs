@@ -61,6 +61,8 @@ const calculateValue = (
       return Math.min(...values);
     case CalculateFunction.AVG:
       return values.reduce((acc, val) => acc + val, 0) / values.length;
+    case CalculateFunction.COUNT:
+      return values.length;
     default:
       return values.reduce((acc, val) => acc + val, 0);
   }

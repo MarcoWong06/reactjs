@@ -4,11 +4,10 @@ import {
   type DataSource,
   SortOrder,
   CalculateFunction,
-  type DataSourceItem,
 } from "@cap-view/hooks";
 import { Top10Widget } from "@cap-view/components";
 
-const Top10Example: React.FC = () => {
+const MyExample: React.FC = () => {
   const { setData, loading, getResult, Events } = useTop10();
 
   const dataSource: DataSource = {
@@ -30,30 +29,31 @@ const Top10Example: React.FC = () => {
       { id: "A010", name: "Judy", value: 70 },
     ],
     metaData: {
-      widgetName: "",
-      chartTitle: undefined,
+      widgetName: "Top 10 Fundraisers",
+      chartTitle: "籌款排行榜",
       sortOrder: SortOrder.DESC,
       calculateFunction: CalculateFunction.SUM,
-      thousandSeparator: undefined,
-      prefix: undefined,
-      suffix: undefined,
-      buttonUri: undefined,
-      buttonText: undefined,
-      buttonIcon: undefined,
-      nameLabel: undefined,
-      valueLabel: undefined,
-      championIndexColor: undefined,
-      runnerUpIndexColor: undefined,
-      thirdPlaceIndexColor: undefined,
-      otherIndexColor: undefined,
-      championIndexBackgroundColor: undefined,
-      runnerUpIndexBackgroundColor: undefined,
-      thirdPlaceIndexBackgroundColor: undefined,
-      otherIndexBackgroundColor: undefined,
-      championValueColor: undefined,
-      runnerUpValueColor: undefined,
-      thirdPlaceValueColor: undefined,
-      otherValueColor: undefined,
+      thousandSeparator: ",",
+      prefix: "HKD$ ",
+      suffix: "",
+      buttonUri: "https://example.com/xxx",
+      buttonText: "立即捐款",
+      buttonIcon:
+        '<svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#000000" d="M20 17q.86 0 1.45.6t.58 1.4L14 22l-7-2v-9h1.95l7.27 2.69q.78.31.78 1.12q0 .47-.34.82t-.86.37H13l-1.75-.67l-.33.94L13 17zM16 3.23Q17.06 2 18.7 2q1.36 0 2.3 1t1 2.3q0 1.03-1 2.46t-1.97 2.39T16 13q-2.08-1.89-3.06-2.85t-1.97-2.39T10 5.3q0-1.36.97-2.3t2.34-1q1.6 0 2.69 1.23M.984 11H5v11H.984z"/></svg>',
+      nameLabel: "",
+      valueLabel: "籌款額：",
+      championIndexColor: undefined, // "#ffffff",
+      runnerUpIndexColor: undefined, // "#ffffff",
+      thirdPlaceIndexColor: undefined, // "#ffffff",
+      otherIndexColor: undefined, // "#ffffff",
+      championIndexBackgroundColor: undefined, // "#f57c00",
+      runnerUpIndexBackgroundColor: undefined, // "#9e9e9e",
+      thirdPlaceIndexBackgroundColor: undefined, // "#b5966e",
+      otherIndexBackgroundColor: undefined, // "#214083",
+      championValueColor: undefined, // "#f57c00",
+      runnerUpValueColor: undefined, // "#333",
+      thirdPlaceValueColor: undefined, // "#333",
+      otherValueColor: undefined, // "#333",
       championValueBackgroundColor: undefined,
       runnerUpValueBackgroundColor: undefined,
       thirdPlaceValueBackgroundColor: undefined,
@@ -79,9 +79,12 @@ const Top10Example: React.FC = () => {
     Events.onButtonClick((result) => {
       const item = result.dataContent;
       if (item && dataSource.metaData.buttonUri) {
+        // Replace ${param} placeholders with actual values from the item
         let uri = dataSource.metaData.buttonUri;
+
+        // Replace all ${key} patterns with corresponding values from the item
         uri = uri.replace(/\$\{(\w+)\}/g, (match, key) => {
-          const value = (item as DataSourceItem)[key];
+          const value = (item as any)[key];
           return value !== undefined ? String(value) : match;
         });
 
@@ -111,4 +114,4 @@ const Top10Example: React.FC = () => {
   );
 };
 
-export default Top10Example;
+export default MyExample;

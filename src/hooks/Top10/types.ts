@@ -3,6 +3,7 @@ export const CalculateFunction = {
   MAX: "max",
   MIN: "min",
   AVG: "avg",
+  COUNT: "count",
 } as const;
 
 export type CalculateFunction =
@@ -39,6 +40,7 @@ export interface DataSourceMetaData {
   thousandSeparator?: string;
   prefix?: string;
   suffix?: string;
+  buttonUri?: string;
   buttonText?: string;
   buttonIcon?: string;
   nameLabel?: string;
@@ -78,6 +80,7 @@ export interface Top10MetaData {
   thousandSeparator?: string;
   prefix?: string;
   suffix?: string;
+  buttonUri?: string;
   buttonText?: string;
   buttonIcon?: string;
   nameLabel?: string;
