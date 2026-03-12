@@ -42,6 +42,7 @@ const Top10Example: React.FC = () => {
       buttonIcon: undefined,
       nameLabel: undefined,
       valueLabel: undefined,
+      lowerLimit: undefined,
       championIndexColor: undefined,
       runnerUpIndexColor: undefined,
       thirdPlaceIndexColor: undefined,

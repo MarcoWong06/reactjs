@@ -50,7 +50,7 @@ export class Events {
 
 const calculateValue = (
   values: number[],
-  calculateFunction: CalculateFunction
+  calculateFunction: CalculateFunction,
 ): number => {
   switch (calculateFunction) {
     case CalculateFunction.SUM:
@@ -71,7 +71,8 @@ const calculateValue = (
 const processDataItems = (
   items: Array<DataSourceItem>,
   calculateFunction: CalculateFunction,
-  sortOrder: SortOrder
+  sortOrder: SortOrder,
+  lowerLimit?: number,
 ): Top10Item[] => {
   // Group by ID
   const userMap = new Map<
@@ -92,15 +93,17 @@ const processDataItems = (
     }
   });
 
-  const processedItems = Array.from(userMap.values()).map((user) => ({
-    id: user.id,
-    name: user.name,
-    value: calculateValue(user.values, calculateFunction),
-    rank: 0,
-  }));
+  const processedItems = Array.from(userMap.values())
+    .map((user) => ({
+      id: user.id,
+      name: user.name,
+      value: calculateValue(user.values, calculateFunction),
+      rank: 0,
+    }))
+    .filter((item) => lowerLimit === undefined || item.value >= lowerLimit);
 
   processedItems.sort((a, b) =>
-    sortOrder === SortOrder.ASC ? a.value - b.value : b.value - a.value
+    sortOrder === SortOrder.ASC ? a.value - b.value : b.value - a.value,
   );
 
   return processedItems.slice(0, 10).map((item, index) => ({
@@ -123,7 +126,13 @@ export const useTop10 = (): UseTop10Return => {
       const meta = datasource.metaData;
       const calculateFunction = meta.calculateFunction || CalculateFunction.SUM;
       const sortOrder = meta.sortOrder || SortOrder.DESC;
-      const top10Items = processDataItems(items, calculateFunction, sortOrder);
+      const lowerLimit = meta.lowerLimit;
+      const top10Items = processDataItems(
+        items,
+        calculateFunction,
+        sortOrder,
+        lowerLimit,
+      );
       setDataState(top10Items);
       setMetaData({
         widgetName: meta.widgetName,

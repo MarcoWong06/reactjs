@@ -45,6 +45,7 @@ export interface DataSourceMetaData {
   buttonIcon?: string;
   nameLabel?: string;
   valueLabel?: string;
+  lowerLimit?: number;
   // Color customization for champion (1st place)
   championIndexColor?: string;
   championIndexBackgroundColor?: string;
@@ -85,6 +86,7 @@ export interface Top10MetaData {
   buttonIcon?: string;
   nameLabel?: string;
   valueLabel?: string;
+  lowerLimit?: number;
   // Color customization for champion (1st place)
   championIndexColor?: string;
   championIndexBackgroundColor?: string;
